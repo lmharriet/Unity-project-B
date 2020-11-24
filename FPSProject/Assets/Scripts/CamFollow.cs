@@ -13,7 +13,7 @@ public class CamFollow : MonoBehaviour
     public Transform target;    //카메라가 따라다닐 타겟
     public float speed = 10.0f; //카메라 이동속도
     public Transform target1st; //1인칭 시점
-    bool isFPS = false;         //1인칭이냐?
+    public bool isFPS = false;         //1인칭이냐?
 
 
     // Start is called before the first frame update
