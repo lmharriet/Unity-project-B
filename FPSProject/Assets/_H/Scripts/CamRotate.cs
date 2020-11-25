@@ -7,7 +7,7 @@ public class CamRotate : MonoBehaviour
 {
     //카메라를 마우스 움직이는 방향으로 회전하기
 
-    public float speed = 150f; //회전속도 (Time.deltaTime을 통해서 1초에 150만큼 움직인다)
+    public float speed = 300f; //회전속도 (Time.deltaTime을 통해서 1초에 150만큼 움직인다)
     float angleX, angleY; //직접 제어할 회전각도   
     
     // Update is called once per frame

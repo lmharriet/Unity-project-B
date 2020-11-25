@@ -9,7 +9,7 @@ public class PlayerMove : MonoBehaviour
     public float speed = 5.0f; // 이동속도
     CharacterController controller;
 
-    public float gravity = 9.1f;
+    public float gravity = 9.81f;
     public float jumpSpeed = 8.0f;
 
     Vector3 dir = Vector3.zero;
@@ -29,9 +29,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Move()
     {
-
-
-        if (controller.isGrounded)
+        if (controller.isGrounded)//플레이어가 땅에 닿아있는 상태인지?
         {
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
@@ -48,7 +46,15 @@ public class PlayerMove : MonoBehaviour
         }
         
             dir.y -= gravity * Time.deltaTime;
-        
+
+
+
+        //if(controller.collisionFlags ==CollisionFlags.Below)
+        //{
+            //CollisionFlags.Above
+            //CollisionFlags.Below
+            //CollisionFlags.Sides
+        //}
 
         //대각선 이동 속도를 상하좌우와 동일하게 만들기
         //게임에 따라 일부러 대각선은 빠르게 이동하도록 하는 경우도 있다
@@ -62,7 +68,7 @@ public class PlayerMove : MonoBehaviour
 
         // transform.Translate(dir * speed * Time.deltaTime);
 
-     
+
         //문제점 : 충돌처리 안됨, 공중부양, 땅파고 들기 
         //캐릭터 컨트롤러 컴포넌트를 사용해서 문제점 해결하기
         //캐릭터컨트롤러는 충돌감지만 하고 물리가 적용안된다
@@ -72,7 +78,6 @@ public class PlayerMove : MonoBehaviour
         controller.Move(dir * speed * Time.deltaTime);
 
         //controller.SimpleMove(dir * speed * Time.deltaTime);
-
 
     }
 
