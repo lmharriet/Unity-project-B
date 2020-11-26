@@ -5,8 +5,10 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float CamV, CamH;
+    
     CharacterController controller;
     public Camera PlayerCam;
+    public float hp = 20;
 
     float h, v;
     float speed = 3f;

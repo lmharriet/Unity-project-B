@@ -34,9 +34,14 @@ public class GunFire : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 100f))
             {
-                print(hit.collider.name);
+               // print(hit.collider.name);
 
                 Instantiate(flames, hit.point, Quaternion.LookRotation(hit.normal));
+
+                if(hit.collider.tag == "Enemy")
+                {
+                    hit.collider.GetComponent<Enemy>().Damaged(1);
+                }
             }
         }
 
@@ -47,7 +52,7 @@ public class GunFire : MonoBehaviour
         {
             GameObject bomb = Instantiate(bombFactory);
             bomb.transform.position = firePoint.transform.position;
-
+            
             Rigidbody rb = bomb.GetComponent<Rigidbody>();
 
             //rb.AddForce(Camera.main.transform.forward * power, ForceMode.Impulse);
@@ -112,7 +117,5 @@ public class GunFire : MonoBehaviour
 
 
     //}
-
-
 
 }
