@@ -7,7 +7,7 @@ public class EnemyFSM : MonoBehaviour
 {
     GameObject Target;
     CharacterController controller;
-    Vector3 returnPoint;
+
     float distance;
     //Enemy state
 
@@ -17,6 +17,10 @@ public class EnemyFSM : MonoBehaviour
     }
 
     EnemyState state; // Enemy state 변수
+
+    Enemy enem;
+    Animator anim;
+    //Coroutine coru;
 
     //유용한 기능
     #region "Idle 상태에 필요한 변수들"
@@ -40,17 +44,33 @@ public class EnemyFSM : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        enem = GetComponent<Enemy>();
+
         state = EnemyState.Idle;
 
         Target = GameObject.Find("player");
-        returnPoint = new Vector3(-35f, 3.5f, -45f);
-        gameObject.transform.position = returnPoint;
+        //returnPoint = new Vector3(-35f, 3.5f, -45f);
+        //gameObject.transform.position = returnPoint;
+        //returnPoint = transform.position;
         controller = GetComponent<CharacterController>();
+
+        //Golem_Redrock_H7
+
+        //object, transform 
+        anim = transform.Find("Golem_Redrock_H7").GetComponent<Animator>();
+        //die();
+        anim.SetInteger("state", 0);
+        //coru = StartCoroutine(die());
+        //StartCoroutine(ch());
+        ////StartCoroutine(coru);
     }
 
     // Update is called once per frame
     void Update()
     {
+        //if (Input.GetKeyDown(KeyCode.Q)) StartCoroutine(ch());
+        //if (coru == null) print("코루틴 종료");
+
         distance = Vector3.Distance(Target.transform.position, gameObject.transform.position);
 
         switch (state)
@@ -74,7 +94,7 @@ public class EnemyFSM : MonoBehaviour
                 Die();
                 break;
         }
-        print(state);
+        //print(state);
     }
 
 
@@ -87,8 +107,9 @@ public class EnemyFSM : MonoBehaviour
         //- 상태전환 출력
 
 
-        if (distance < 20.0f)
+        if (distance < 30.0f)
         {
+            anim.SetInteger("state", 1);
             state = EnemyState.Move;
         }
 
@@ -96,12 +117,17 @@ public class EnemyFSM : MonoBehaviour
     //이동상태
     private void Move()
     {
+        //여기다가 쓰면 move가 돌때 계속 실행이됨.
+        //anim.SetInteger("state", 0);
+
         //1. 플레이어를 향해서 이동 후 공격범위 안에 들어오면 공격상태로 변경
         //2. 플레이어를 추격하더라도 처음위치에서 일정범위를 넘어가면 리턴상태로 변경
         //- 플레이어처럼 캐릭터컨트롤러를 이용하기
         //- 공격범위 1미터
         //- 상태변경-> 공격상태 or 리턴상태
         //- 상태전환 출력 
+        transform.LookAt(Target.transform);
+
         Vector3 dir = Target.transform.position - gameObject.transform.position;
         dir.Normalize();
         controller.Move(dir * 5.0f * Time.deltaTime);
@@ -110,12 +136,10 @@ public class EnemyFSM : MonoBehaviour
         {
             state = EnemyState.Attack;
         }
-        if (Vector3.Distance(gameObject.transform.position, returnPoint) > 20.0f)
+        if (Vector3.Distance(gameObject.transform.position, enem.returnPoint) > 20.0f)
         {
             state = EnemyState.Return;
         }
-
-
     }
     //공격상태
     private void Attack()
@@ -131,20 +155,24 @@ public class EnemyFSM : MonoBehaviour
         }
 
     }
+
     private void Return()
     {
         //1.에너미가 플레이어를 추격하더라도 처음 위치에서 일정범위를 벗어나면 다시 돌아옴
         //-처음위치에서 일정범위 30미터
         //-상태변경
         //-상태전환 출력
-        Vector3 dir = returnPoint - gameObject.transform.position;
+        transform.LookAt(enem.returnPoint);
+
+        Vector3 dir = enem.returnPoint - gameObject.transform.position;
         dir.Normalize();
         controller.Move(dir * 3.0f * Time.deltaTime);
 
-        float distance = Vector3.Distance(transform.position, returnPoint);
+        float distance = Vector3.Distance(transform.position, enem.returnPoint);
         if (distance < 1.0f)
         {
-            transform.position = returnPoint;
+            anim.SetInteger("state", 0);
+            transform.position = enem.returnPoint;
             state = EnemyState.Idle;
         }
     }
@@ -170,4 +198,12 @@ public class EnemyFSM : MonoBehaviour
         //-상태전환 출력
     }
 
+
+    //코루틴 사용법
+    //IEnumerator ch() 
+    //{
+    //    print("버프 실행");
+    //    yield return new WaitForSeconds(4f);
+    //    print("버프 종료");
+    //}
 }

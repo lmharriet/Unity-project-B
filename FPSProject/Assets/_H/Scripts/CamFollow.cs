@@ -60,8 +60,6 @@ public class CamFollow : MonoBehaviour
             //카메라의 위치를 강제로 타겟에 고정해둔다
             transform.position = target.position;
         }
-
-
     }
 
     private void FollowTarget()
