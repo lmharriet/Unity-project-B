@@ -173,7 +173,7 @@ public class EnemyFSM : MonoBehaviour
 
         anim.SetTrigger("hit");
         state = EnemyState.Damaged;
-        //아무리 animation 방식이 trigger라고 해도, 데미지를 입으면서 move가 되면 안되니까 ㅎㅎ;
+        //아무리 animation 방식이 trigger라고 해도, 데미지를 입으면서 move가 되면 안되니까.
         //Damaged로 state를 옮겨둔다. (move를 못하게)
     }
 
@@ -183,7 +183,6 @@ public class EnemyFSM : MonoBehaviour
         //animation frame이 거의 막바지에 도달했을 때
         if(anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95f)
         {
-            
             //state를 idle로 바꾼다!
             state = EnemyState.Idle;
         }
@@ -192,11 +191,11 @@ public class EnemyFSM : MonoBehaviour
     //죽음상태 (Any State)
     public void Die()
     {
-        //이 경우도... 죽었는데 칼의 충돌체가 남아있으면 시체를 밟다가 데미지를 입는다..ㅎ;
+        //이 경우도... 죽었는데 칼의 충돌체가 남아있으면 시체를 밟다가 데미지를 입는다
         if (swordObj.activeSelf) swordObj.SetActive(false);
 
-        //이 경우도 죽은 상태(animation) 인데 state가 move여서
-        //시체가 플레이어를 향해 기어오는 불상사를 막기위해.. state를 Die로 변경만 해준다( 사실상 변경해도 실행되는 update가 없다)
+        //죽은 상태(animation)가 실행될 때, 이전 state가 Move 상태이면, Die animation실행하며 플레이어를 향해
+        //움직이는  state를 Die로 변경만 해준다( 사실상 변경해도 실행되는 update가 없다)
         state = EnemyState.Die;
         anim.SetTrigger("die");
 
