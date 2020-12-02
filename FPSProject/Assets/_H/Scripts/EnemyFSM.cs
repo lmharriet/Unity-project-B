@@ -19,7 +19,7 @@ public class EnemyFSM : MonoBehaviour
     EnemyState state; // Enemy state 변수
 
     Enemy enem;
-    public Animator anim;
+    Animator anim;
 
     //attack을 할 때 object를 활성화, 비활성화 하기 위함
     public GameObject swordObj;
@@ -35,8 +35,8 @@ public class EnemyFSM : MonoBehaviour
         controller = GetComponent<CharacterController>();
 
         //object, transform 
-        anim = transform.Find("DogPolyart").GetComponent<Animator>();
-   
+        //anim = transform.Find("DogPolyart").GetComponent<Animator>();
+        anim = GetComponentInChildren<Animator>();
         anim.SetInteger("state", 0);
 
         //처음은 공격 콜라이더가 비활성화 상태
@@ -181,7 +181,7 @@ public class EnemyFSM : MonoBehaviour
     private void Damaged()
     {
         //animation frame이 거의 막바지에 도달했을 때
-        if(anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95f)
+        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95f)
         {
             //state를 idle로 바꾼다!
             state = EnemyState.Idle;
