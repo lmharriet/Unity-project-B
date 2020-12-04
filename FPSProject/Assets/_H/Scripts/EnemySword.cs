@@ -17,7 +17,7 @@ public class EnemySword : MonoBehaviour
             //pStat의 Damaged 함수를 실행
             pStat.Damaged(damage);
 
-            print(damage + "의 피해를 입었습니다!");
+           // print(damage + "의 피해를 입었습니다!");
             
             //이제 충돌을 마쳤으므로 다단 히트를 방지하기 위해
             //오브젝트를 비활성화 한다.

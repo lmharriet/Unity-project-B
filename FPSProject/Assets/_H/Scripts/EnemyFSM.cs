@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyFSM : MonoBehaviour
 {
@@ -20,6 +21,30 @@ public class EnemyFSM : MonoBehaviour
 
     Enemy enem;
     Animator anim;
+
+    //유니티 길찾기 알고리즘이 적용된 네비게이션을 사용하려면
+    //반드시 UnityEngine.AI를 추가해줘야 한다
+    //네비게이션이 2D에서 했던 길찾기 알고리즘보다 성능이 좋다
+    //2D기반 A*같은 경우는 본인 위치에서 실시간으로 계산을 해야 하는 반면
+    //유니티 네비게이션은 맵전체를 베이크 해서 에이전트가 어느 위치에 있던
+    //미리 계산된 정보를 사용한다
+
+    NavMeshAgent agent;
+
+    //FSM기반으로 코드를 짜는 경우 주의해야 할 사항 
+    //충돌은 Collider로 하고,
+    //이동만 NevMeshAgent를 사용해야
+    //EnemyFSM을 제대로 사용할 수 있다
+    //충돌이 제대로 작동하지 않을 수도 있다.
+
+    //따라서 시작할 대 네비메시에이전트는꺼줘야 한다
+    //게임오브젝트 -> 활성, 비활성 SetActive(true or false)
+
+    //컴포넌트->활성, 비활성 enable = ture or false;
+
+
+
+
 
     //attack을 할 때 object를 활성화, 비활성화 하기 위함
     public GameObject swordObj;
@@ -41,6 +66,10 @@ public class EnemyFSM : MonoBehaviour
 
         //처음은 공격 콜라이더가 비활성화 상태
         swordObj.SetActive(false);
+
+
+        agent = GetComponent<NavMeshAgent>();
+        agent.enabled = false;
     }
 
     // Update is called once per frame
@@ -84,6 +113,10 @@ public class EnemyFSM : MonoBehaviour
     //이동상태
     private void Move()
     {
+        //이동은 네비게이션을 사용한다
+        if (!agent.enabled) agent.enabled = true;
+
+
         //여기다가 쓰면 move가 돌때 계속 실행이됨.
         //anim.SetInteger("state", 1);
 
@@ -95,17 +128,18 @@ public class EnemyFSM : MonoBehaviour
         //move to Target (tracking)
         if (distance < enem.findRange)
         {
-            //어디를 봐야함?
-            transform.LookAt(Target.transform);
+            agent.SetDestination(Target.transform.position);
+            ////어디를 봐야함?
+            //transform.LookAt(Target.transform);
 
-            Vector3 dir = Target.transform.position - gameObject.transform.position;
-            dir.Normalize();
-            controller.Move(dir * 5.0f * Time.deltaTime);
+            //Vector3 dir = Target.transform.position - gameObject.transform.position;
+            //dir.Normalize();
+            //controller.Move(dir * 5.0f * Time.deltaTime);
 
-            //enem2Player
+            ////enem2Player
             float atkDistance = Vector3.Distance(transform.position, Target.transform.position);
 
-            //enemy와 player의 거리가 atkRange보다 작을 때(범위안에 들어왔을 때) state를 attack으로 변경
+            ////enemy와 player의 거리가 atkRange보다 작을 때(범위안에 들어왔을 때) state를 attack으로 변경
             if (atkDistance < enem.atkRange)
             {
                 anim.SetInteger("state", 2);
@@ -117,18 +151,25 @@ public class EnemyFSM : MonoBehaviour
         else
         {
             //어디를 봐야함?
-            transform.LookAt(enem.returnPoint);
+            // transform.LookAt(enem.returnPoint);
 
             Vector3 dir = enem.returnPoint - gameObject.transform.position;
             dir.Normalize();
-            controller.Move(dir * 3.0f * Time.deltaTime);
+            // controller.Move(dir * 3.0f * Time.deltaTime);
+
+            agent.SetDestination(enem.returnPoint);
 
             float rtnDistance = Vector3.Distance(transform.position, enem.returnPoint);
             if (rtnDistance < 1.0f)
             {
-                anim.SetInteger("state", 0);
                 transform.position = enem.returnPoint;
+                //reset -> identity는 같은 의미라고 생각하면 됨.
+                transform.rotation = Quaternion.identity;
+
+                anim.SetInteger("state", 0);
                 state = EnemyState.Idle;
+
+               
             }
         }
     }
@@ -163,6 +204,7 @@ public class EnemyFSM : MonoBehaviour
                 state = EnemyState.Move;
             }
         }
+        agent.enabled = false;
     }
 
 
@@ -202,8 +244,5 @@ public class EnemyFSM : MonoBehaviour
         //뒤에 시간초를 넣어준 이유는? 잘 알거라고 생각합니다.
         Destroy(gameObject, 3f);
 
-        //오늘의 결론. 
-
-        //코루틴 안썻음 ㅅㄱ
     }
 }
