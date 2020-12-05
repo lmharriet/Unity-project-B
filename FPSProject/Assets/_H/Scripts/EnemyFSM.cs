@@ -43,9 +43,6 @@ public class EnemyFSM : MonoBehaviour
     //컴포넌트->활성, 비활성 enable = ture or false;
 
 
-
-
-
     //attack을 할 때 object를 활성화, 비활성화 하기 위함
     public GameObject swordObj;
 
@@ -93,6 +90,7 @@ public class EnemyFSM : MonoBehaviour
                 Damaged();
                 break;
             case EnemyState.Die:
+                agent.velocity = Vector3.zero;
                 //이 상태일 때는 아무것도 안함 (죽었을 때 move를 방지하기 위함)
                 break;
         }
@@ -176,6 +174,8 @@ public class EnemyFSM : MonoBehaviour
     //공격상태
     private void Attack()
     {
+        agent.velocity = Vector3.zero;
+
         float curFrame = anim.GetCurrentAnimatorStateInfo(0).normalizedTime % 1;
         // 소수점만 가져옴
         // % 1을 하는 이유는 최대를 1로 지정하기 위함이다. ( 0 < curFrame < 1 )
@@ -222,6 +222,7 @@ public class EnemyFSM : MonoBehaviour
     //피격상태 (Any State)
     private void Damaged()
     {
+        agent.velocity = Vector3.zero;
         //animation frame이 거의 막바지에 도달했을 때
         if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95f)
         {
